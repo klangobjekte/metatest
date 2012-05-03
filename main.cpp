@@ -12,11 +12,6 @@ using namespace meta;
 //static int argument = MTOOLSCOMMENT;
 static int argument = DIGICOMMENT;
 
-
-
-
-
-
 QStringList directorySoundFileList;
 QList<QVariant>Ldataentry;
 int allFilesCount;
