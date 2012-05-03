@@ -1,6 +1,10 @@
 #include <QtCore>
-//#include <iostream>
+
 #include "coutput.h"
+#include <iostream>
+#include <clocale>
+#include <string>
+#include <cstdlib>
 
 using namespace std;
 using namespace meta;
@@ -191,6 +195,60 @@ void scanDir()
     }
 
 }
+
+int main(int argc, char *argv[])
+{
+    //QCoreApplication a(argc, argv);
+    char askpath[256]=PROBLEM2;
+    char* srcPath;
+
+    //pfile = sndfile->getFile();
+    //! No file name on command line?
+    if(argc == 1)
+    {
+    //qDebug() << "REACHED = 1" ;
+    // Prompt for input:
+    //printf("Please enter a Filepath: ");
+    // Get the file name entered
+    //fgets(askpath, MAXPATHLEN, stdin);
+
+    int len = strlen(askpath);
+    //Remove the newline if it's there
+    if(askpath[len-1] == '\n')
+    {
+        askpath[len-1] = '\0';
+    }
+    }
+    // Get 2nd command line string
+    else
+      strcpy(askpath, argv[1]);
+    /**
+    if(!(pfile = fopen(askpath, "rb")))
+    {
+    // Test auf einen gueltigen Pfad.
+    printf("Sorry, can't open %s\n", askpath);
+    return -1;
+    }
+    fclose(pfile);
+    */
+    srcPath =  askpath;
+    //cout << "askpath: " << askpath << endl;
+    QString  stringpath;
+    stringpath = QString::fromAscii((const char*)askpath);
+    //cout << "open: " << openPath(stringpath) << endl;
+    /**
+    if (openPath(stringpath))
+    {
+    //getMetaData();
+    cleanUp();
+    }
+    */
+    openDir(stringpath);
+    //qDebug() << "directorySoundFileList" << directorySoundFileList << endl;
+    scanDir();
+    //return a.exec();
+}
+
 #endif
 
 
@@ -436,12 +494,7 @@ void scanDir()
     }
 
 }
-#endif
 
-#include <iostream>
-#include <clocale>
-#include <string>
-#include <cstdlib>
 
 int main(int argc, char *argv[])
 {
@@ -535,18 +588,18 @@ GetVolumeInformation(srcPath,Volumename,VolumenameSize,NULL, NULL,NULL,Filesyste
     //! No file name on command line?
     if(argc == 1)
     {
-	//qDebug() << "REACHED = 1" ;
-	// Prompt for input:
-	//printf("Please enter a Filepath: ");
-	// Get the file name entered
-	//fgets(askpath, MAXPATHLEN, stdin);
+    //qDebug() << "REACHED = 1" ;
+    // Prompt for input:
+    //printf("Please enter a Filepath: ");
+    // Get the file name entered
+    //fgets(askpath, MAXPATHLEN, stdin);
 
         int len = wcslen(askpath);
-	//Remove the newline if it's there
-	if(askpath[len-1] == '\n')
-	{
-	    askpath[len-1] = '\0';
-	}
+    //Remove the newline if it's there
+    if(askpath[len-1] == '\n')
+    {
+        askpath[len-1] = '\0';
+    }
     }
     // Get 2nd command line string
     else
@@ -554,9 +607,9 @@ GetVolumeInformation(srcPath,Volumename,VolumenameSize,NULL, NULL,NULL,Filesyste
     /**
     if(!(pfile = fopen(askpath, "rb")))
     {
-	// Test auf einen gueltigen Pfad.
-	printf("Sorry, can't open %s\n", askpath);
-	return -1;
+    // Test auf einen gueltigen Pfad.
+    printf("Sorry, can't open %s\n", askpath);
+    return -1;
     }
     fclose(pfile);
     */
@@ -576,3 +629,9 @@ GetVolumeInformation(srcPath,Volumename,VolumenameSize,NULL, NULL,NULL,Filesyste
     scanDir();
     //return a.exec();
 }
+
+#endif
+
+
+
+
