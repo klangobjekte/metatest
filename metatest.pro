@@ -52,12 +52,14 @@ win32 {
     INCLUDEPATH += \
         "C:\Program Files\Mega-Nerd\libsndfile\include" \
         "C:\Program Files\Microsoft DirectX SDK (June 2008)\Include" \
-        "C:/Qt_Projekte/meta_w2"
+        "C:/Qt_Projekte/meta_mp"
+
 
 
     LIBS += "C:\Program Files\Microsoft DirectX SDK (June 2008)\Lib\x86\dsound.lib" \
         "C:\Program Files\Mega-Nerd\libsndfile\lib\libsndfile-1.lib" \
-        "C:/Qt_Projekte/meta_w2/debug/libmeta.a"
+        #"C:/Qt_Projekte/meta_mp/debug/libmeta.a"
+        "C:\Qt_Projekte\meta-build-desktop-Qt_aus_PATH_Debug\debug\libmeta.a"
 
         #DEFINES \
         #+= \
