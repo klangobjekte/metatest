@@ -286,7 +286,7 @@ int main(int argc, char *argv[])
 bool openPath(QString path)
 {
     //! Segmentation FAULT
-    //qDebug() << "ScanHelper Path:" << path;
+    qDebug() << "ScanHelper Path:" << path;
 
     if(path.length()>=MAXPATHLEN)
     {
@@ -317,14 +317,21 @@ bool openPath(QString path)
     }
     */
     // Kopiere in std::vector inklusive Nullterminierung
-    std::vector<wchar_t> vec(strw.begin(), strw.end());
-    vec.push_back(L'\0');
+    //std::vector<wchar_t> vec(strw.begin(), strw.end());
+    //vec.push_back(L'\0');
 
     // Extrahiere wchar_t*
-    LPWSTR srcpath = &vec[0];
+    //LPWSTR srcpath = &vec[0];
     //for(int i = 0; i< wcslen(srcpath);++i)
     //    wprintf(L"srcpath at: %d %d\n",i,srcpath[i]);
 
+    int len = wcslen(strw.c_str());
+    wchar_t *wpath = new  wchar_t [len+1];
+    wcscpy(wpath,strw.c_str());
+
+    wchar_t *srcpath;
+    //srcpath = array;
+    srcpath = wpath;
 
     //wcout << endl << "path fuer Ueberhabe: " << srcpath << endl;
 
@@ -350,7 +357,7 @@ bool openPath(QString path)
     Ldataentry.clear();
     wchar_t *arraypointer=NULL;
 
-    arraypointer = cOutput->w_getMetaData(argument,srcpath);
+    arraypointer = cOutput->getMetaData(argument,srcpath);
 
     //cOutput->getMetaDataToConsole(argument,srcpath);
 
@@ -401,8 +408,6 @@ bool openPath(QString path)
 
   return true;
 }
-
-
 
 QList<QVariant> getLdataEntry()
 {
@@ -490,7 +495,6 @@ void scanDir()
 
 }
 
-
 int main(int argc, char *argv[])
 {
     //setlocale(LC_CTYPE, "");
@@ -509,12 +513,15 @@ int main(int argc, char *argv[])
     wchar_t* srcPath;
 
     //wstring w_string = utfstring.toStdWString();
+    QString umlautstring = "C:\\Qt_Projekte\\testfolder";
+    //QString umlautstring = "C:\\Qt_Projekte\\testfolder\\_no_prob\\simpleTest";
+    //QString umlautstring = "C:\\Qt_Projekte\\testfolder\\_no_prob\\_wav_test";
     //QString umlautstring = "C:\\Qt_Projekte\\testfolder\\_no_prob\\\u00dcmlauttest";
     //QString umlautstring = "G:/Users/Admin/Documents/python/_testfiles/testfolder/_no_prob/\u00dcmlauttest";
     //QString umlautstring = "G:\\Users\\Admin\\Documents\\python\\_testfiles\\testfolder\\_no_prob\\\u00dcmlauttest";
     //QString umlautstring = "G:\\Users\\Admin\\Documents\\python\\_testfiles\\testfolder\\_no_prob\\\u00dcmlauttest";
     //QString umlautstring = "G:\\Users\\Admin\\Documents\\python\\_testfiles\\testfolder\\_no_prob\\Umlauttest";
-    QString umlautstring = "C:\\Qt_Projekte\\testfolder\\_no_prob\\Umlauttest";
+    //QString umlautstring = "C:\\Qt_Projekte\\testfolder\\_no_prob\\Umlauttest";
     //QString umlautstring = "G:/Users/Admin/Documents/python/_testfiles/testfolder/_no_prob/Ümlauttest";
 
     qDebug() << "umlautstring: " << umlautstring << endl;
@@ -547,11 +554,11 @@ int main(int argc, char *argv[])
 
 
     wstring w_string = umlaututfsstring.toStdWString();
-   vector<wchar_t> vec(w_string.begin(), w_string.end());
-   vec.push_back(L'\0');
+    vector<wchar_t> vec(w_string.begin(), w_string.end());
+    vec.push_back(L'\0');
 
-   // Extrahiere wchar_t*
-   srcPath = &vec[0];
+    // Extrahiere wchar_t*
+    srcPath = &vec[0];
 
    //wcout << "srcPath: " << srcPath << endl;
 
@@ -567,16 +574,16 @@ int main(int argc, char *argv[])
    //statfs("G", &s);
    //printf("Filesystem: %x \n" ,s.f_type);
 
-   /**
-DWORD VolumenameSize = 256;
-wchar_t Volumename[256];
-DWORD outsize = 256;
-wchar_t Filesystenname[256];
+       /**
+    DWORD VolumenameSize = 256;
+    wchar_t Volumename[256];
+    DWORD outsize = 256;
+    wchar_t Filesystenname[256];
 
-GetVolumeInformation(srcPath,Volumename,VolumenameSize,NULL, NULL,NULL,Filesystenname,outsize);
-//wcout << endl << L"Volumename:     " << Volumename <<
-//         endl << L"Filesystenname: " << Filesystenname << endl << endl;
-*/
+    GetVolumeInformation(srcPath,Volumename,VolumenameSize,NULL, NULL,NULL,Filesystenname,outsize);
+    //wcout << endl << L"Volumename:     " << Volumename <<
+    //         endl << L"Filesystenname: " << Filesystenname << endl << endl;
+    */
 
 
     //pfile = sndfile->getFile();
@@ -614,8 +621,7 @@ GetVolumeInformation(srcPath,Volumename,VolumenameSize,NULL, NULL,NULL,Filesyste
     //stringpath = QString::fromAscii((const char*)askpath);
     //QString stringpath = QString::fromWCharArray(askpath);
     //qDebug() << "AskPath nach QString stringpath: " << stringpath << endl;
-     qDebug() << "umlaututfsstring: " << umlaututfsstring << endl;
-
+    qDebug() << "umlaututfsstring: " << umlaututfsstring << endl;
     openDir(umlaututfsstring);
     //qDebug() << "directorySoundFileList: ";
     foreach(QString listentry,directorySoundFileList)
