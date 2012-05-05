@@ -26,10 +26,10 @@ bool stopped = false;
 //#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/_no_prob/_sd2/quarantaene"
 //#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/_no_prob/_Time"
 //#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/_no_prob"
-//#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder"
+#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder"
 //#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/HannaBarbera"
 //#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder 3/_Soundformate/Pt OSX mit comment/quarantaene"
-#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles"
+//#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles"
 //#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder 7"
 //#define PROBLEM2 "/Volumes/Little/Archive24"
 //#define PROBLEM2 "/Volumes/Macintosh HD"
@@ -39,7 +39,7 @@ bool stopped = false;
 bool openPath(QString path)
 {
     //! Segmentation FAULT
-    qDebug() << "ScanHelper Path:" << path;
+    //qDebug() << "ScanHelper Path:" << path;
 
     if(path.length()>=MAXPATHLEN)
     {
@@ -55,7 +55,7 @@ bool openPath(QString path)
     srcpath  = new  (nothrow)char[len +1];
     if (srcpath == NULL)
     {
-	cout << "Error: main (48) memory could not be allocated" << endl;
+        cout << "Error: main (63) memory could not be allocated" << endl;
 	if(srcpath)
 	    delete[] srcpath;
 	return false;
@@ -87,16 +87,16 @@ bool openPath(QString path)
     Ldataentry.clear();
     char *arraypointer;
 
-    arraypointer=0;
+    arraypointer=NULL;
     arraypointer = cOutput->getMetaData(argument,srcpath);
     if(arraypointer == NULL)
     {
-	//cout << "No ARRAY>" << endl;
-	if(cOutput)
-	    delete cOutput;
-	if(srcpath)
-	    delete []srcpath;
-	return false;
+        cout << "No ARRAY>" << endl;
+        if(cOutput)
+            delete cOutput;
+        if(srcpath)
+            delete []srcpath;
+        return false;
     }
 
     QByteArray data;
@@ -117,7 +117,7 @@ bool openPath(QString path)
 
 QList<QVariant> getLdataEntry()
 {
-    qDebug() << "Ldataentry: " << Ldataentry << endl;
+    //qDebug() << "Ldataentry: " << Ldataentry << endl;
     return Ldataentry;
 }
 
@@ -128,7 +128,7 @@ void openDir(QString path)
     QString fileutf8string;
     QStringList filterstringlist;
     filterstringlist << "wav" << "aif" << "sd2" << "mp3" << "m4a" << "" << "L" << "R";
-    qDebug()<<"dir.entryList: " << dir.entryList(QDir::Files | QDir::NoSymLinks) <<endl;
+    //qDebug()<<"dir.entryList: " << dir.entryList(QDir::Files | QDir::NoSymLinks) <<endl;
     foreach (QString file, dir.entryList(QDir::Files | QDir::NoSymLinks))
     {
 	QString extension = QFileInfo(file).suffix();
@@ -137,14 +137,14 @@ void openDir(QString path)
 	{
 	    //QString absolutePath;
 	    fileutf8string = file.toUtf8();
-	    qDebug() << "fileutf8string: " << fileutf8string;
+        //qDebug() << "fileutf8string: " << fileutf8string;
 	    absolutePath = dir.absoluteFilePath(fileutf8string);
-	    qDebug()<<"file absolutePath: " << absolutePath <<endl;
+        //qDebug()<<"file absolutePath: " << absolutePath <<endl;
 	    QFileInfo finfo(absolutePath);
 	    if(finfo.exists())
 	    {
 		directorySoundFileList.append(absolutePath);
-		qDebug()<<"file absolutePath finfo exists: " << absolutePath <<endl;
+        //qDebug()<<"file absolutePath finfo exists: " << absolutePath <<endl;
 		//allFilesCount++;
 		//emit emitAllFilesCount(allFilesCount);
 	    }
@@ -169,10 +169,10 @@ void scanDir()
     //qDebug() << "directorySoundFileList" << directorySoundFileList << endl;
     for(int count =0; count< directorySoundFileList.length(); ++count)
     {
-	qDebug() << "directorySoundFileList:" << directorySoundFileList.at(count) << "at: " << count;
+    qDebug() << endl << "directorySoundFileList:" << directorySoundFileList.at(count) << "at: " << count;
 	if(openPath(directorySoundFileList[count]))
 	{
-	    qDebug() << "TRUE" << endl;
+        qDebug() << "Path opened: True " << endl;
 	    QList<QVariant> mydataEntryList = getLdataEntry();
 	    //if(!(dataEntryList[0].isNull()) && !(dataEntryList.isEmpty()) && !(dataEntryList.contains("\n")) && !(dataEntryList.length() < 3))
 	    if(!(mydataEntryList.isEmpty()) && !(mydataEntryList.contains("\n")) && !(mydataEntryList.length() < 3))
@@ -183,7 +183,11 @@ void scanDir()
 		    //qDebug()<< "choosenArchiv" << choosenArchiv;
 		    //++addedCount;
 		//}
+            foreach(QVariant entry, mydataEntryList)
+                qDebug() << entry.toString();
+            qDebug() << endl;
 	    }
+
 	    //emit totalCount(count);
 	    //scanHelper->cleanUp();
 	}
