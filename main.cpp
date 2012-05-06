@@ -292,7 +292,7 @@ bool openPath(QString path)
     //! Segmentation FAULT
     qDebug() << "ScanHelper Path:" << path;
 
-    if(path.length()>=MAXPATHLEN)
+    if(path.length()>=MAX_META_PATHLEN)
     {
         qDebug() << "ERROR: PathName to Long main 42" << path << endl;
         return false;
@@ -517,7 +517,8 @@ int main(int argc, char *argv[])
     wchar_t* srcPath;
 
     //wstring w_string = utfstring.toStdWString();
-    QString umlautstring = "C:\\Qt_Projekte\\testfolder";
+    QString umlautstring = "G:\\Users\\Admin\\Documents\\python\\_testfiles";
+    //QString umlautstring = "C:\\Qt_Projekte\\testfolder";
     //QString umlautstring = "C:\\Qt_Projekte\\testfolder\\_no_prob\\simpleTest";
     //QString umlautstring = "C:\\Qt_Projekte\\testfolder\\_no_prob\\_wav_test";
     //QString umlautstring = "C:\\Qt_Projekte\\testfolder\\_no_prob\\\u00dcmlauttest";
