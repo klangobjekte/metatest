@@ -59,7 +59,8 @@ win32 {
     LIBS += "C:\Program Files\Microsoft DirectX SDK (June 2008)\Lib\x86\dsound.lib" \
         "C:\Program Files\Mega-Nerd\libsndfile\lib\libsndfile-1.lib" \
         #"C:/Qt_Projekte/meta_mp/debug/libmeta.a"
-        "C:\Qt_Projekte\meta-build-desktop-Qt_aus_PATH_Debug\debug\libmeta.a"
+        #"C:\Qt_Projekte\meta-build-desktop-Qt_aus_PATH_Debug\debug\libmeta.a"
+C:\Qt_Projekte\meta-build-desktop-Qt_4_8_1_for_Desktop_-_MSVC2008__Qt_SDK__Debug\debug\libmeta.a
 
         #DEFINES \
         #+= \
