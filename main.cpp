@@ -294,7 +294,7 @@ bool openPath(QString path)
     //! Segmentation FAULT
     qDebug() << "ScanHelper Path:" << path;
 
-    if(path.length()>=MAXPATHLEN)
+    if(path.length()>=MAX_META_PATHLEN)
     {
         qDebug() << "ERROR: PathName to Long main 42" << path << endl;
         return false;
@@ -363,7 +363,7 @@ bool openPath(QString path)
     Ldataentry.clear();
     wchar_t *arraypointer=NULL;
 
-    arraypointer = cOutput->getMetaData(argument,srcpath);
+    arraypointer = cOutput->getMetaDataV2(argument,srcpath);
 
     //cOutput->getMetaDataToConsole(argument,srcpath);
 
@@ -519,7 +519,9 @@ int main(int argc, char *argv[])
     wchar_t* srcPath;
 
     //wstring w_string = utfstring.toStdWString();
-    QString umlautstring = "C:\\Qt_Projekte\\testfolder";
+    //QString umlautstring = "G:\\Users\\Admin\\Documents\\python\\_testfiles";
+    QString umlautstring = "G:\\Users\\Admin\\Music";
+    //QString umlautstring = "C:\\Qt_Projekte\\testfolder";
     //QString umlautstring = "C:\\Qt_Projekte\\testfolder\\_no_prob\\simpleTest";
     //QString umlautstring = "C:\\Qt_Projekte\\testfolder\\_no_prob\\_wav_test";
     //QString umlautstring = "C:\\Qt_Projekte\\testfolder\\_no_prob\\\u00dcmlauttest";
@@ -530,7 +532,7 @@ int main(int argc, char *argv[])
     //QString umlautstring = "C:\\Qt_Projekte\\testfolder\\_no_prob\\Umlauttest";
     //QString umlautstring = "G:/Users/Admin/Documents/python/_testfiles/testfolder/_no_prob/Ümlauttest";
 
-    qDebug() << "umlautstring: " << umlautstring << endl;
+    //qDebug() << "umlautstring: " << umlautstring << endl;
 
 
 
@@ -540,7 +542,7 @@ int main(int argc, char *argv[])
 
 
     QString umlaututfsstring = umlautstring.toUtf8();
-    qDebug() << "umlaututfsstring: " << umlaututfsstring << endl;
+    //qDebug() << "umlaututfsstring: " << umlaututfsstring << endl;
     //int len = umlaututfsstring.size()*2;
     //qDebug() << "len" << len;
     //wchar_t *new_w_string;
@@ -630,8 +632,8 @@ int main(int argc, char *argv[])
     qDebug() << "umlaututfsstring: " << umlaututfsstring << endl;
     openDir(umlaututfsstring);
     //qDebug() << "directorySoundFileList: ";
-    foreach(QString listentry,directorySoundFileList)
-        qDebug() << listentry;
+    //foreach(QString listentry,directorySoundFileList)
+    //    qDebug() << listentry;
     qDebug() << endl;
     scanDir();
     //return a.exec();
