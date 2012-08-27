@@ -26,7 +26,9 @@ bool stopped = false;
 //#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/_no_prob/_sd2/quarantaene"
 //#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/_no_prob/_Time"
 //#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/_no_prob"
-#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder"
+//#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/mp3"
+#define PROBLEM2 "/Users/Admin/Music/iTunes"
+//#define PROBLEM2 "/Volumes/MacGo/Musik Archiv"
 //#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/HannaBarbera"
 //#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder 3/_Soundformate/Pt OSX mit comment/quarantaene"
 //#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles"
@@ -41,7 +43,7 @@ bool openPath(QString path)
     //! Segmentation FAULT
     //qDebug() << "ScanHelper Path:" << path;
 
-    if(path.length()>=MAXPATHLEN)
+    if(path.length()>=MAX_META_PATHLEN)
     {
 	qDebug() << "ERROR: PathName to Long main 42" << path << endl;
 	return false;
