@@ -26,8 +26,10 @@ bool stopped = false;
 //#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/_no_prob/_sd2/quarantaene"
 //#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/_no_prob/_Time"
 //#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/_no_prob"
-//#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/mp3"
-#define PROBLEM2 "/Users/Admin/Music/iTunes"
+#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/mp3"
+//#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/mp3/mp3_quarantaene"
+//define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/id3v1"
+//#define PROBLEM2 "/Users/Admin/Music/iTunes"
 //#define PROBLEM2 "/Volumes/MacGo/Musik Archiv"
 //#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/HannaBarbera"
 //#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder 3/_Soundformate/Pt OSX mit comment/quarantaene"
@@ -90,7 +92,7 @@ bool openPath(QString path)
     char *arraypointer;
 
     arraypointer=NULL;
-    arraypointer = cOutput->getMetaData(argument,srcpath);
+    arraypointer = cOutput->getMetaDataV2(argument,srcpath);
     if(arraypointer == NULL)
     {
         cout << "No ARRAY>" << endl;
