@@ -1,16 +1,35 @@
+#include "test_Definitions.h"
 #include <QtCore>
 
+#ifdef M_USETESTDIALOG
+
+#include <QtGui>
+#include <QFileDialog>
+#include "directorythreadworker.h"
+#include "scanThreadWorker.h"
+#endif
+
+#include <QString>
+#include <QDebug>
+
+
 #include "coutput.h"
+
 #include <iostream>
 #include <clocale>
 #include <string>
 #include <cstdlib>
+#include "scanHelper.h"
+
 
 using namespace std;
 using namespace meta;
 
 //static int argument = MTOOLSCOMMENT;
 static int argument = DIGICOMMENT;
+
+
+
 
 QStringList directorySoundFileList;
 QList<QVariant>Ldataentry;
@@ -19,36 +38,163 @@ bool stopped = false;
 
 
 #ifdef __APPLE__
-#define PROBLEM1 "/Users/Admin/Documents/python/_testfiles/testfolder/_no_prob/_sd2/oknotba.wav.sd2"
-//#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/_no_prob/_wav_test"
-//#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/_no_prob/_aiff test"
-//#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/_no_prob/_sd2"
-//#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/_no_prob/_sd2/quarantaene"
-//#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/_no_prob/_Time"
-//#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/_no_prob"
-#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/mp3"
-//#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/mp3/mp3_quarantaene"
-//define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder/id3v1"
-//#define PROBLEM2 "/Users/Admin/Music/iTunes"
-//#define PROBLEM2 "/Volumes/MacGo/Musik Archiv"
-//#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/HannaBarbera"
-//#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder 3/_Soundformate/Pt OSX mit comment/quarantaene"
-//#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles"
-//#define PROBLEM2 "/Users/Admin/Documents/python/_testfiles/testfolder 7"
-//#define PROBLEM2 "/Volumes/Little/Archive24"
-//#define PROBLEM2 "/Volumes/Macintosh HD"
-//#define PROBLEM2 "/Volumes/Archiv_Ex"
+void openDir(QString path);
+//bool openPath(QString path);
+QList<QVariant> getAllMetaData(QString path);
+
+void scanDir();
+
+int main(int argc, char *argv[])
+{
+#ifdef M_USETESTDIALOG
+    QApplication app(argc, argv);
 
 
-bool openPath(QString path)
+#else
+    QCoreApplication app(argc, argv);
+#endif
+    char askpath[256]=PROBLEM2;
+    char* srcPath;
+
+
+
+    //! No file name on command line?
+    if(argc == 1){
+        //printf("Please enter a Filepath: ");
+        //fgets(askpath, MAXPATHLEN, stdin);
+        int len = strlen(askpath);
+        if(askpath[len-1] == '\n'){
+            askpath[len-1] = '\0';
+        }
+    }
+    else{
+        strcpy(askpath, argv[1]);
+    }
+
+    srcPath =  askpath;
+    QString  stringpath;
+
+#ifdef M_USETESTDIALOG
+    QString dialogpath = QFileDialog::getExistingDirectory(0,
+          "Open Directory",
+          "Please select a directory: ",
+          QFileDialog::ShowDirsOnly
+          | QFileDialog::DontResolveSymlinks
+          ).toUtf8();
+    stringpath = dialogpath;
+#else
+    //stringpath = QString::fromAscii((const char*)askpath);
+    QString path = PROBLEM2;
+    stringpath = path.toUtf8();
+
+#endif
+
+#ifndef M_USEOLD
+    DirectoryThreadWorker directoryThreadWorker;
+    directoryThreadWorker.setFilterState(SCAN_NOTFILTERED);
+    directoryThreadWorker.setUpdateState(SCAN_NOUPDATE);
+    directoryThreadWorker.setStopped(false);
+    directoryThreadWorker.clearAllFilesCount();
+    directoryThreadWorker.cleardirectorySoundFileList();
+    directoryThreadWorker.runOpenPath(stringpath,QVariantList());
+    QStringList directorySoundFileList = directoryThreadWorker.getdirectorySoundFileList();
+    //qDebug() << directorySoundFileList << endl;
+
+    QStringList notIncludedList = directoryThreadWorker.getNotIncludedList();
+    ScanThreadWorker scanThreadWorker("");
+    scanThreadWorker.init();
+    scanThreadWorker.setDataEntryList(directorySoundFileList,QVariantList());
+
+    scanThreadWorker.executeScanHelper();
+    scanThreadWorker.setMToolsChecked(1);
+    scanThreadWorker.executeScanHelper();
+    QStringList noScanDataFoundList = scanThreadWorker.getNoScanDataFoundList();
+    stopped = false;
+#else
+    directorySoundFileList.clear();
+    openDir(stringpath);
+    scanDir();
+#endif
+
+#ifdef M_USETESTDIALOG
+    return app.exec();
+#endif
+}
+
+
+void openDir(QString path)
+{
+    QDir dir(path);
+    if(dir.isReadable())
+    {
+    foreach (QString file, dir.entryList(QDir::Files | QDir::NoSymLinks)){
+    //qDebug() << file;
+        QString fileutf8string = file.toUtf8();
+        QString absolutePath = dir.absoluteFilePath(fileutf8string);
+        directorySoundFileList.append(absolutePath);
+    }
+
+    foreach (QString subDir, dir.entryList(QDir::Dirs
+            | QDir::NoDotAndDotDot | QDir::NoSymLinks)){
+        QString subDirutf8string = subDir.toUtf8();
+        QString absolutePath;
+
+        absolutePath = dir.absoluteFilePath(subDirutf8string);
+        //qDebug() << "subdir: " << subDir;
+        if(!stopped == true && subDir != "\\")
+            openDir(absolutePath);
+    }
+
+    }
+}
+
+void scanDir()
+{
+
+    //qDebug() << "directorySoundFileList" << directorySoundFileList << endl;
+    for(int count =0; count< directorySoundFileList.length(); ++count)
+    {
+    //qDebug() << endl << "directorySoundFileList:" << directorySoundFileList.at(count) << "at: " << count;
+    //if(openPath(directorySoundFileList[count]))
+    //{
+        //qDebug() << "Path opened: True " << endl;
+        QString path = directorySoundFileList[count];
+#ifdef M_PRINT_PATH
+        qDebug() <<  "Scan File: "<< path;
+#endif
+        QList<QVariant> mydataEntryList = getAllMetaData(path);
+        //if(!(dataEntryList[0].isNull()) && !(dataEntryList.isEmpty()) && !(dataEntryList.contains("\n")) && !(dataEntryList.length() < 3))
+        if(!(mydataEntryList.isEmpty()) && !(mydataEntryList.contains("\n")) && !(mydataEntryList.length() < 3))
+        {
+        //if(queryExecute(dataEntryList,choosenArchiv))
+        //{
+           // qDebug()<< "mydataEntryList" << mydataEntryList;
+            //qDebug()<< "choosenArchiv" << choosenArchiv;
+            //++addedCount;
+        //}
+#ifdef M_PRINT_DATAENTRYLIST
+            foreach(QVariant entry, mydataEntryList)
+                qDebug() << entry.toString();
+            qDebug() << endl;
+#endif
+        }
+
+        //emit totalCount(count);
+        //scanHelper->cleanUp();
+    //}
+    }
+
+}
+
+QList<QVariant> getAllMetaData(QString path)
 {
     //! Segmentation FAULT
     //qDebug() << "ScanHelper Path:" << path;
 
     if(path.length()>=MAX_META_PATHLEN)
     {
-	qDebug() << "ERROR: PathName to Long main 42" << path << endl;
-	return false;
+    //qDebug() << "ERROR: PathName to Long main 42" << path << endl;
+        return QList<QVariant>();
     }
 
     //! Path must be UTF String!
@@ -62,31 +208,15 @@ bool openPath(QString path)
         cout << "Error: main (63) memory could not be allocated" << endl;
 	if(srcpath)
 	    delete[] srcpath;
-	return false;
+    return QList<QVariant>();
     }
     else
     {
-	strcpy(srcpath,strAscii.c_str());
+        strcpy(srcpath,strAscii.c_str());
     }
-
-
-
-    if(!(pfile = fopen(srcpath, "rb")))
-    {
-	    printf("Sorry, can't open %s\n", srcpath);
-	    //qDebug() << "ScanHelper: cant open" << srcpath;
-	    if(srcpath)
-		delete []srcpath;
-	    return false;
-    }
-    fclose(pfile);
 
     COutput *cOutput;
     cOutput = new COutput;
-
-
-    //int argument = DIGICOMMENT;
-    //cout << "ScanHelper ascii :" << srcpath <<  endl;
 
     Ldataentry.clear();
     char *arraypointer;
@@ -95,12 +225,12 @@ bool openPath(QString path)
     arraypointer = cOutput->getMetaDataV2(argument,srcpath);
     if(arraypointer == NULL)
     {
-        cout << "No ARRAY>" << endl;
+        cout << "<No ARRAY> " << srcpath << endl;
         if(cOutput)
             delete cOutput;
         if(srcpath)
             delete []srcpath;
-        return false;
+        return QList<QVariant>();
     }
 
     QByteArray data;
@@ -116,141 +246,15 @@ bool openPath(QString path)
 	delete cOutput;
     if(srcpath)
 	delete []srcpath;
-  return true;
+
+  return Ldataentry;
 }
 
-QList<QVariant> getLdataEntry()
-{
-    //qDebug() << "Ldataentry: " << Ldataentry << endl;
-    return Ldataentry;
-}
-
-void openDir(QString path)
-{
-    QDir dir(path);
-    QString absolutePath;
-    QString fileutf8string;
-    QStringList filterstringlist;
-    filterstringlist << "wav" << "aif" << "sd2" << "mp3" << "m4a" << "" << "L" << "R";
-    //qDebug()<<"dir.entryList: " << dir.entryList(QDir::Files | QDir::NoSymLinks) <<endl;
-    foreach (QString file, dir.entryList(QDir::Files | QDir::NoSymLinks))
-    {
-	QString extension = QFileInfo(file).suffix();
-	//qDebug()<< "extension" << extension;
-	if( (filterstringlist.contains(extension,Qt::CaseInsensitive)) )
-	{
-	    //QString absolutePath;
-	    fileutf8string = file.toUtf8();
-        //qDebug() << "fileutf8string: " << fileutf8string;
-	    absolutePath = dir.absoluteFilePath(fileutf8string);
-        //qDebug()<<"file absolutePath: " << absolutePath <<endl;
-	    QFileInfo finfo(absolutePath);
-	    if(finfo.exists())
-	    {
-		directorySoundFileList.append(absolutePath);
-        //qDebug()<<"file absolutePath finfo exists: " << absolutePath <<endl;
-		//allFilesCount++;
-		//emit emitAllFilesCount(allFilesCount);
-	    }
-	}
-    }
-
-    foreach (QString subDir, dir.entryList(QDir::Dirs
-			| QDir::NoDotAndDotDot | QDir::NoSymLinks))
-    {
-	QString absolutePath;
-	absolutePath = dir.absoluteFilePath(subDir);
-	if(!stopped == true)
-	    openDir(absolutePath);
-    }
 
 
-}
 
-void scanDir()
-{
 
-    //qDebug() << "directorySoundFileList" << directorySoundFileList << endl;
-    for(int count =0; count< directorySoundFileList.length(); ++count)
-    {
-    qDebug() << endl << "directorySoundFileList:" << directorySoundFileList.at(count) << "at: " << count;
-	if(openPath(directorySoundFileList[count]))
-	{
-        qDebug() << "Path opened: True " << endl;
-	    QList<QVariant> mydataEntryList = getLdataEntry();
-	    //if(!(dataEntryList[0].isNull()) && !(dataEntryList.isEmpty()) && !(dataEntryList.contains("\n")) && !(dataEntryList.length() < 3))
-	    if(!(mydataEntryList.isEmpty()) && !(mydataEntryList.contains("\n")) && !(mydataEntryList.length() < 3))
-	    {
-		//if(queryExecute(dataEntryList,choosenArchiv))
-		//{
-		   // qDebug()<< "mydataEntryList" << mydataEntryList;
-		    //qDebug()<< "choosenArchiv" << choosenArchiv;
-		    //++addedCount;
-		//}
-            foreach(QVariant entry, mydataEntryList)
-                qDebug() << entry.toString();
-            qDebug() << endl;
-	    }
 
-	    //emit totalCount(count);
-	    //scanHelper->cleanUp();
-	}
-    }
-
-}
-
-int main(int argc, char *argv[])
-{
-    //QCoreApplication a(argc, argv);
-    char askpath[256]=PROBLEM2;
-    char* srcPath;
-
-    //pfile = sndfile->getFile();
-    //! No file name on command line?
-    if(argc == 1)
-    {
-    //qDebug() << "REACHED = 1" ;
-    // Prompt for input:
-    //printf("Please enter a Filepath: ");
-    // Get the file name entered
-    //fgets(askpath, MAXPATHLEN, stdin);
-
-    int len = strlen(askpath);
-    //Remove the newline if it's there
-    if(askpath[len-1] == '\n')
-    {
-        askpath[len-1] = '\0';
-    }
-    }
-    // Get 2nd command line string
-    else
-      strcpy(askpath, argv[1]);
-    /**
-    if(!(pfile = fopen(askpath, "rb")))
-    {
-    // Test auf einen gueltigen Pfad.
-    printf("Sorry, can't open %s\n", askpath);
-    return -1;
-    }
-    fclose(pfile);
-    */
-    srcPath =  askpath;
-    //cout << "askpath: " << askpath << endl;
-    QString  stringpath;
-    stringpath = QString::fromAscii((const char*)askpath);
-    //cout << "open: " << openPath(stringpath) << endl;
-    /**
-    if (openPath(stringpath))
-    {
-    //getMetaData();
-    cleanUp();
-    }
-    */
-    openDir(stringpath);
-    //qDebug() << "directorySoundFileList" << directorySoundFileList << endl;
-    scanDir();
-    //return a.exec();
-}
 
 #endif
 

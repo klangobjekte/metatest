@@ -5,16 +5,20 @@
 #-------------------------------------------------
 
 QT       += core
-QT       -= gui
+QT       += gui
 
 TARGET = metatest
 CONFIG   += console
-CONFIG   -= app_bundle
+#CONFIG   -= app_bundle
 
 TEMPLATE = app
 
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    scanHelper.cpp \
+    scanThreadWorker.cpp \
+    directorythreadworker.cpp \
+    definitions.cpp
 
 
 
@@ -26,8 +30,9 @@ macx {
     # /Developer/SDKs/AAF-src-1.1.3/AAFPPCDarwinSDK/g++/include \
     QMAKE_LFLAGS += -F/System/Library/Frameworks \
 	-F//Developer/Library/PrivateFrameworks
-    QMAKE_MAC_SDK = /Developer/SDKs/MacOSX10.4u.sdk
-    CONFIG += x86
+    #QMAKE_MAC_SDK = /Developer/SDKs/MacOSX10.4u.sdk
+QMAKE_MAC_SDK = /Developer/SDKs/MacOSX10.5.sdk
+CONFIG += x86
     CONFIG += ppc
     LIBS += -L/usr/local/lib \
 	-lsqlite3.0 \
@@ -76,3 +81,10 @@ unix:linux-g++ {
     INCLUDEPATH += /ldc/include
     LIBS += -L/ldc/lib
 }
+
+HEADERS += \
+    scanHelper.h \
+    scanThreadWorker.h \
+    directorythreadworker.h \
+    definitions.h \
+    test_Definitions.h
